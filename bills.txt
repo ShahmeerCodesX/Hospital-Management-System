@@ -1,0 +1,6 @@
+bill_id,patient_id,appointment_id,amount,status,date
+1,1,1,1500.00,paid,15-04-2025
+2,2,2,2000.00,unpaid,10-05-2026
+3,1,3,2500.00,unpaid,11-05-2026
+4,3,4,1500.00,cancelled,12-05-2026
+5,1,5,1500,unpaid,21-04-2026

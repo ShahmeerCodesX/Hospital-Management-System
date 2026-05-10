@@ -1,0 +1,4 @@
+doctor_id,name,specialization,contact,password,fee
+1,Dr. Sara Khan,Cardiology,03111234567,doc456,1500.00
+2,Dr. Usman Ahmed,Neurology,03331122334,brainy1,2000.00
+3,Dr. Maria Qasim,Pediatrics,03457788990,kids123,1000.004,shahmeer,heart,03137205965,shahmeer,1200

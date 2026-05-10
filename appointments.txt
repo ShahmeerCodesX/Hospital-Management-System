@@ -1,0 +1,6 @@
+appointment_id,patient_id,doctor_id,date,time_slot,status
+1,1,1,15-04-2025,09:00,completed
+2,2,1,10-05-2026,10:00,completed
+3,1,2,11-05-2026,11:00,pending
+4,3,2,12-05-2026,14:00,cancelled
+5,1,1,21-04-2026,12:00,pending

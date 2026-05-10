@@ -1,0 +1,5 @@
+prescription_id,appointment_id,patient_id,doctor_id,date,medicines,notes
+1,1,1,1,15-04-2025,Paracetamol 500mg;Amoxicillin 250mg,Take after meals
+2,5,2,1,10-05-2026,Ibuprofen 400mg,Take twice a day
+3,6,3,2,11-05-2026,Lisinopril 10mg,Monitor blood pressure daily
+4,7,1,2,12-05-2026,Metformin 500mg,Take with breakfast

@@ -1,0 +1,4 @@
+patient_id,name,age,gender,contact,password,balance
+1,Ahmed Ali,28,M,03001234567,pass123,3500
+2,Zainab Bibi,34,F,03219876543,health786,1200.50
+3,John Doe,45,M,03124455667,secure99,0.00
