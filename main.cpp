@@ -1,6 +1,4 @@
-﻿// ============================================================
-//  MediCore HMS  -  main.cpp  |  SFML 3.1
-// ============================================================
+﻿
 #include <SFML/Graphics.hpp>
 #include <fstream>
 #include <ctime>
@@ -22,7 +20,7 @@
 #include "invalidinputexception.h"
 #include "slotunavailableexception.h"
 
-// ── Manual string helpers ─────────────────────────────────────────
+
 static int  ms_len(const char* s) { int n = 0; if (!s)return 0; while (s[n])n++; return n; }
 static void ms_cpy(const char* src, char* dst, int max) { int i = 0; while (src[i] && i < max - 1) { dst[i] = src[i]; i++; }dst[i] = '\0'; }
 static void ms_cat(char* dst, const char* src, int max) { int d = ms_len(dst), i = 0; while (src[i] && d + i < max - 1) { dst[d + i] = src[i]; i++; }dst[d + i] = '\0'; }
@@ -43,7 +41,7 @@ static void ms_today(char* buf) {
     buf[6] = '0' + y / 1000; buf[7] = '0' + (y / 100) % 10; buf[8] = '0' + (y / 10) % 10; buf[9] = '0' + y % 10; buf[10] = '\0';
 }
 
-// ── Slot check ───────────────────────────────────────────────────
+
 static bool slotTaken(Storage<Appointments>& adb, int docID, const char* date, const char* slot) {
     Appointments* arr = adb.getall(); int sz = adb.getsize();
     for (int i = 0; i < sz; i++) {
@@ -54,15 +52,13 @@ static bool slotTaken(Storage<Appointments>& adb, int docID, const char* date, c
     return false;
 }
 
-// ── Brighten color (replaces sf::Uint8 arithmetic) ───────────────
+
 static sf::Color brighten(sf::Color c, int by) {
     int r = (int)c.r + by, g = (int)c.g + by, b = (int)c.b + by;
     return sf::Color((uint8_t)(r > 255 ? 255 : r), (uint8_t)(g > 255 ? 255 : g), (uint8_t)(b > 255 ? 255 : b), c.a);
 }
 
-// ════════════════════════════════════════════════════════════
-//  DRAWING HELPERS
-// ════════════════════════════════════════════════════════════
+
 static void drawRect(sf::RenderWindow& w, float x, float y, float wd, float ht,
     sf::Color col, float outline = 0.f, sf::Color outCol = sf::Color::White) {
     sf::RectangleShape r({ wd,ht }); r.setPosition({ x,y }); r.setFillColor(col);
@@ -125,9 +121,7 @@ static void drawHint(sf::RenderWindow& w, const sf::Font& f) {
     drawText(w, f, "ESC = Back  |  ENTER = Confirm", 50, 702, 14, sf::Color(160, 160, 160));
 }
 
-// ════════════════════════════════════════════════════════════
-//  main
-// ════════════════════════════════════════════════════════════
+
 int main() {
     sf::RenderWindow window(sf::VideoMode({ 1280u,720u }), "MediCore HMS - SFML 3.1");
     window.setFramerateLimit(60);
@@ -173,7 +167,7 @@ int main() {
         while (const std::optional<sf::Event> ev = window.pollEvent()) {
             if (ev->is<sf::Event::Closed>())window.close();
 
-            // ESC = back
+           
             if (const auto* kp = ev->getIf<sf::Event::KeyPressed>()) {
                 if (kp->code == sf::Keyboard::Key::Escape) {
                     if (state == 1 || state == 2 || state == 3) { state = 0; clearLogin(); clearBufs(); }
@@ -183,12 +177,12 @@ int main() {
                 }
             }
 
-            // Text input
+            
             if (const auto* te = ev->getIf<sf::Event::TextEntered>()) {
                 if (te->unicode < 128) {
                     char c = static_cast<char>(te->unicode);
 
-                    // LOGIN
+                    
                     if (state == 1 || state == 2 || state == 3) {
                         if (c == '\b') {
                             if (loginStep == 0 && loginIDLen > 0)loginID[--loginIDLen] = '\0';
@@ -220,7 +214,7 @@ int main() {
                             else if (loginStep == 1 && loginPwLen < 49) { loginPw[loginPwLen++] = c; loginPw[loginPwLen] = '\0'; }
                         }
                     }
-                    // [PAT] BOOK APPOINTMENT
+                  
                     else if (state == 20) {
                         if (c == '\b') {
                             if (bookStep == 0 && len1 > 0)buf1[--len1] = '\0';
@@ -264,7 +258,7 @@ int main() {
                             else if (bookStep == 2 && len3 < 5) { buf3[len3++] = c; buf3[len3] = '\0'; }
                         }
                     }
-                    // [PAT] CANCEL APPOINTMENT
+                    
                     else if (state == 21) {
                         if (c == '\b' && len1 > 0)buf1[--len1] = '\0';
                         else if ((c == '\r' || c == '\n') && len1 > 0) {
@@ -284,7 +278,7 @@ int main() {
                         }
                         else if (c >= '0' && c <= '9' && len1 < 19) { buf1[len1++] = c; buf1[len1] = '\0'; }
                     }
-                    // [PAT] PAY BILL
+                   
                     else if (state == 25) {
                         if (c == '\b' && len1 > 0)buf1[--len1] = '\0';
                         else if ((c == '\r' || c == '\n') && len1 > 0) {
@@ -304,7 +298,7 @@ int main() {
                         }
                         else if (c >= '0' && c <= '9' && len1 < 19) { buf1[len1++] = c; buf1[len1] = '\0'; }
                     }
-                    // [PAT] TOP UP
+                    
                     else if (state == 26) {
                         if (c == '\b' && len1 > 0)buf1[--len1] = '\0';
                         else if ((c == '\r' || c == '\n') && len1 > 0) {
@@ -322,7 +316,7 @@ int main() {
                         }
                         else if ((c >= '0' && c <= '9' || c == '.') && len1 < 19) { buf1[len1++] = c; buf1[len1] = '\0'; }
                     }
-                    // [DOC] MARK COMPLETE
+                   
                     else if (state == 41) {
                         if (c == '\b' && len1 > 0)buf1[--len1] = '\0';
                         else if ((c == '\r' || c == '\n') && len1 > 0) {
@@ -337,7 +331,7 @@ int main() {
                         }
                         else if (c >= '0' && c <= '9' && len1 < 19) { buf1[len1++] = c; buf1[len1] = '\0'; }
                     }
-                    // [DOC] MARK NO-SHOW
+                   
                     else if (state == 42) {
                         if (c == '\b' && len1 > 0)buf1[--len1] = '\0';
                         else if ((c == '\r' || c == '\n') && len1 > 0) {
@@ -354,7 +348,7 @@ int main() {
                         }
                         else if (c >= '0' && c <= '9' && len1 < 19) { buf1[len1++] = c; buf1[len1] = '\0'; }
                     }
-                    // [DOC] WRITE PRESCRIPTION
+                   
                     else if (state == 43) {
                         if (c == '\b') {
                             if (bookStep == 0 && len1 > 0)buf1[--len1] = '\0';
@@ -382,7 +376,7 @@ int main() {
                             else if (bookStep == 2 && llen2 < 299) { longBuf2[llen2++] = c; longBuf2[llen2] = '\0'; }
                         }
                     }
-                    // [DOC] PATIENT HISTORY
+                    
                     else if (state == 44) {
                         if (c == '\b' && len1 > 0)buf1[--len1] = '\0';
                         else if ((c == '\r' || c == '\n') && len1 > 0) {
@@ -391,7 +385,7 @@ int main() {
                         }
                         else if (c >= '0' && c <= '9' && len1 < 19) { buf1[len1++] = c; buf1[len1] = '\0'; }
                     }
-                    // [ADM] ADD DOCTOR
+                    
                     else if (state == 61) {
                         if (c == '\b') {
                             if (bookStep == 0 && len1 > 0)buf1[--len1] = '\0';
@@ -433,7 +427,7 @@ int main() {
                             else if (bookStep == 4 && len5 < 19 && (c >= '0' && c <= '9' || c == '.')) { buf5[len5++] = c; buf5[len5] = '\0'; }
                         }
                     }
-                    // [ADM] REMOVE DOCTOR
+                    
                     else if (state == 62) {
                         if (c == '\b' && len1 > 0)buf1[--len1] = '\0';
                         else if ((c == '\r' || c == '\n') && len1 > 0) {
@@ -449,7 +443,7 @@ int main() {
                         }
                         else if (c >= '0' && c <= '9' && len1 < 19) { buf1[len1++] = c; buf1[len1] = '\0'; }
                     }
-                    // [ADM] DISCHARGE PATIENT
+                    
                     else if (state == 67) {
                         if (c == '\b' && len1 > 0)buf1[--len1] = '\0';
                         else if ((c == '\r' || c == '\n') && len1 > 0) {
@@ -473,7 +467,6 @@ int main() {
                 }
             }
 
-            // Keyboard navigation
             if (const auto* kp = ev->getIf<sf::Event::KeyPressed>()) {
                 if (state == 0) {
                     if (kp->code == sf::Keyboard::Key::Up) { menuSel--; if (menuSel < 0)menuSel = 3; }
@@ -513,9 +506,6 @@ int main() {
             }
         }
 
-        // ════════════════════════════════════════════════════
-        //  RENDER
-        // ════════════════════════════════════════════════════
         window.clear(sf::Color(30, 30, 30));
         window.draw(bg);
         drawRect(window, 0, 0, 1280, 70, sf::Color(0, 0, 0, 160));
@@ -530,7 +520,7 @@ int main() {
                              "5. View All Appointments","6. Unpaid Bills","7. Discharge Patient",
                              "8. Security Log","9. Daily Report","10. Logout" };
 
-        // ROLE SELECT
+        
         if (state == 0) {
             drawText(window, font, "WELCOME - SELECT YOUR ROLE", 370, 210, 35, sf::Color::White, true);
             const char* roleLabels[4] = { "PATIENT","DOCTOR","ADMIN","EXIT" };
@@ -542,7 +532,7 @@ int main() {
             }
             drawText(window, font, "Click a button  or  UP/DOWN + ENTER", 390, 540, 18, sf::Color(200, 200, 200));
         }
-        // LOGIN
+       
         else if (state == 1 || state == 2 || state == 3) {
             const char* pname = (state == 1) ? "PATIENT LOGIN" : (state == 2) ? "DOCTOR LOGIN" : "ADMIN LOGIN";
             drawRect(window, 390, 230, 500, 330, sf::Color(0, 0, 0, 180), 2.f, sf::Color::White);
@@ -556,7 +546,7 @@ int main() {
             else if (statusMsg[0]) { drawRect(window, 390, 490, 500, 44, sf::Color(130, 15, 15, 230)); drawText(window, font, statusMsg, 405, 502, 15, sf::Color::White); }
             drawText(window, font, "ENTER to confirm each field  |  ESC = Back", 405, 543, 14, sf::Color(180, 180, 180));
         }
-        // PATIENT DASHBOARD
+       
         else if (state == 11) {
             char wlc[180] = "Welcome, "; ms_cat(wlc, curPat->getname(), 180);
             ms_cat(wlc, "   |   Balance: PKR ", 180); char bv[20]; ms_ftos(curPat->getbalance(), bv); ms_cat(wlc, bv, 180);
@@ -571,7 +561,7 @@ int main() {
             }
             drawText(window, font, "UP/DOWN + ENTER to select  |  ESC = Logout", 390, 615, 16, sf::Color(180, 180, 180));
         }
-        // [PAT] BOOK APPOINTMENT
+        
         else if (state == 20) {
             drawSectionTitle(window, font, 100, "BOOK APPOINTMENT");
             drawRect(window, 200, 155, 880, 430, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -592,7 +582,7 @@ int main() {
             else if (bookStep == 3) { drawText(window, font, statusMsg, 220, 280, 20, sf::Color(0, 215, 145)); }
             drawStatus(window, font, bookStep < 3 ? statusMsg : "", actionOk); drawHint(window, font);
         }
-        // [PAT] CANCEL APPOINTMENT
+        
         else if (state == 21) {
             drawSectionTitle(window, font, 100, "CANCEL APPOINTMENT");
             drawRect(window, 50, 155, 1180, 450, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -611,7 +601,7 @@ int main() {
             drawInputField(window, font, 70, 530, 400, "Appointment ID to cancel:", buf1, true);
             drawStatus(window, font, statusMsg, actionOk); drawHint(window, font);
         }
-        // [PAT] VIEW APPOINTMENTS
+       
         else if (state == 22) {
             drawSectionTitle(window, font, 100, "MY APPOINTMENTS  (date ascending)");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -639,7 +629,7 @@ int main() {
             if (!found)drawText(window, font, "No appointments found.", 70, 300, 20, sf::Color(160, 160, 160));
             drawHint(window, font);
         }
-        // [PAT] MEDICAL RECORDS
+        
         else if (state == 23) {
             drawSectionTitle(window, font, 100, "MEDICAL RECORDS");
             drawRect(window, 50, 155, 1180, 470, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -660,7 +650,7 @@ int main() {
             if (!found)drawText(window, font, "No medical records found.", 70, 300, 20, sf::Color(160, 160, 160));
             drawHint(window, font);
         }
-        // [PAT] VIEW BILLS
+       
         else if (state == 24) {
             drawSectionTitle(window, font, 100, "MY BILLS");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -684,7 +674,7 @@ int main() {
             }
             drawHint(window, font);
         }
-        // [PAT] PAY BILL
+        
         else if (state == 25) {
             drawSectionTitle(window, font, 100, "PAY BILL");
             drawRect(window, 200, 155, 880, 440, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -701,7 +691,7 @@ int main() {
             drawInputField(window, font, 220, 510, 400, "Bill ID to pay:", buf1, true);
             drawStatus(window, font, statusMsg, actionOk); drawHint(window, font);
         }
-        // [PAT] TOP UP
+        
         else if (state == 26) {
             drawSectionTitle(window, font, 100, "TOP UP BALANCE");
             drawRect(window, 300, 200, 680, 290, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -725,7 +715,7 @@ int main() {
             }
             drawText(window, font, "UP/DOWN + ENTER to select  |  ESC = Logout", 390, 615, 16, sf::Color(180, 180, 180));
         }
-        // [DOC] TODAY'S APPOINTMENTS
+        
         else if (state == 40) {
             drawSectionTitle(window, font, 100, "TODAY'S APPOINTMENTS  (sorted by time)");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -752,7 +742,7 @@ int main() {
             if (!found)drawText(window, font, "No appointments today.", 70, 300, 20, sf::Color(160, 160, 160));
             drawHint(window, font);
         }
-        // [DOC] MARK COMPLETE
+       
         else if (state == 41) {
             drawSectionTitle(window, font, 100, "MARK APPOINTMENT COMPLETE");
             drawRect(window, 300, 200, 680, 270, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -760,14 +750,14 @@ int main() {
             drawInputField(window, font, 320, 252, 580, "Appointment ID:", buf1, true);
             drawStatus(window, font, statusMsg, actionOk); drawHint(window, font);
         }
-        // [DOC] MARK NO-SHOW
+       
         else if (state == 42) {
             drawSectionTitle(window, font, 100, "MARK NO-SHOW");
             drawRect(window, 300, 200, 680, 230, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
             drawInputField(window, font, 320, 225, 580, "Appointment ID:", buf1, true);
             drawStatus(window, font, statusMsg, actionOk); drawHint(window, font);
         }
-        // [DOC] WRITE PRESCRIPTION
+       
         else if (state == 43) {
             drawSectionTitle(window, font, 100, "WRITE PRESCRIPTION");
             drawRect(window, 200, 155, 880, 400, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -777,7 +767,7 @@ int main() {
             else { drawText(window, font, "Prescription saved successfully!", 220, 300, 22, sf::Color(0, 215, 145)); }
             drawStatus(window, font, statusMsg, actionOk); drawHint(window, font);
         }
-        // [DOC] PATIENT HISTORY
+        
         else if (state == 44) {
             drawSectionTitle(window, font, 100, "PATIENT MEDICAL HISTORY");
             drawRect(window, 200, 155, 880, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -814,7 +804,7 @@ int main() {
             }
             drawText(window, font, "UP/DOWN + ENTER to select", 490, 625, 16, sf::Color(180, 180, 180));
         }
-        // [ADM] ADD DOCTOR
+       
         else if (state == 61) {
             drawSectionTitle(window, font, 100, "ADD DOCTOR");
             drawRect(window, 200, 155, 880, 430, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -828,7 +818,7 @@ int main() {
             if (bookStep == 5)drawText(window, font, statusMsg, 220, 425, 18, sf::Color(0, 215, 145));
             drawStatus(window, font, statusMsg, actionOk); drawHint(window, font);
         }
-        // [ADM] REMOVE DOCTOR
+       
         else if (state == 62) {
             drawSectionTitle(window, font, 100, "REMOVE DOCTOR");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -842,7 +832,7 @@ int main() {
             drawInputField(window, font, 70, 520, 400, "Doctor ID to remove:", buf1, true);
             drawStatus(window, font, statusMsg, actionOk); drawHint(window, font);
         }
-        // [ADM] VIEW ALL PATIENTS
+      
         else if (state == 63) {
             drawSectionTitle(window, font, 100, "ALL PATIENTS");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -860,7 +850,7 @@ int main() {
             if (!found)drawText(window, font, "No patients registered.", 70, 300, 20, sf::Color(160, 160, 160));
             drawHint(window, font);
         }
-        // [ADM] VIEW ALL DOCTORS
+       
         else if (state == 64) {
             drawSectionTitle(window, font, 100, "ALL DOCTORS");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -874,7 +864,7 @@ int main() {
             if (!found)drawText(window, font, "No doctors registered.", 70, 300, 20, sf::Color(160, 160, 160));
             drawHint(window, font);
         }
-        // [ADM] VIEW ALL APPOINTMENTS
+        
         else if (state == 65) {
             drawSectionTitle(window, font, 100, "ALL APPOINTMENTS  (date descending)");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -902,7 +892,7 @@ int main() {
             if (!found)drawText(window, font, "No appointments found.", 70, 300, 20, sf::Color(160, 160, 160));
             drawHint(window, font);
         }
-        // [ADM] UNPAID BILLS
+        
         else if (state == 66) {
             drawSectionTitle(window, font, 100, "UNPAID BILLS");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -927,7 +917,7 @@ int main() {
             }
             drawHint(window, font);
         }
-        // [ADM] DISCHARGE PATIENT
+        
         else if (state == 67) {
             drawSectionTitle(window, font, 100, "DISCHARGE PATIENT");
             drawRect(window, 300, 200, 680, 290, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -935,7 +925,7 @@ int main() {
             drawInputField(window, font, 320, 255, 580, "Patient ID to discharge:", buf1, true);
             drawStatus(window, font, statusMsg, actionOk); drawHint(window, font);
         }
-        // [ADM] SECURITY LOG
+      
         else if (state == 68) {
             drawSectionTitle(window, font, 100, "SECURITY LOG");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -945,7 +935,7 @@ int main() {
             if (!found)drawText(window, font, "Security log is empty.", 70, 300, 20, sf::Color(160, 160, 160));
             drawHint(window, font);
         }
-        // [ADM] DAILY REPORT
+        
         else if (state == 69) {
             drawSectionTitle(window, font, 100, "DAILY REPORT");
             drawRect(window, 50, 155, 1180, 460, sf::Color(0, 0, 0, 160), 1.f, sf::Color(80, 80, 80));
@@ -974,7 +964,7 @@ int main() {
             drawHint(window, font);
         }
 
-        // Mouse: BACK button
+        
         if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
             sf::Vector2f m = window.mapPixelToCoords(sf::Mouse::getPosition(window));
             sf::FloatRect backRect({ 20.f,20.f }, { 100.f,38.f });
@@ -989,7 +979,7 @@ int main() {
             if (backRect.contains(m))wasDown = true; else wasDown = false;
         }
 
-        // Mouse: Role buttons
+       
         {
             static bool roleMouseWasDown = false;
             bool leftDown = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
